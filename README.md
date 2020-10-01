@@ -7,6 +7,17 @@ The Detectify-BugCrowd integration triggers a Lambda function every time a Detec
 
 <img width="900" alt="Picture 1" src="https://user-images.githubusercontent.com/33635169/93575608-28064200-f99a-11ea-9590-da6d8a5a5b81.png">
 
+## Local setup
+
+After cloning the repo, you have to create a .env file with the following variables in it:
+```
+BOUNTY_UUID=<your_id>
+HOST= http://localhost:3000
+DETECTIFY_API_KEY=<your_key>
+DETECTIFY_SECRET_KEY=<your_secrect_key>
+BUG_CROWD_TOKEN=<your_token>
+```
+
 ## Step 1:  Create a new user in AWS
 
 This step is needed for deploying lambda on your Aws account. The option is located under **Identity and Access Management (IAM)** [AWS Identity and Access Management](https://console.aws.amazon.com/iam/home?region=eu-west-1#/users)
