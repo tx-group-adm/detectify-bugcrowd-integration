@@ -1,0 +1,177 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+  sonarcloud: sonarsource/sonarcloud@1.0.0
+
+executors:
+  python38:
+    environment:
+      LANG: C.UTF-8
+    docker:
+      - image: circleci/python:3.8
+
+jobs:
+  build-and-test:
+    docker:
+      - image: circleci/node:12
+
+    working_directory: ~/repo
+
+    environment:
+      BASH_ENV: bash_env
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install dependencies
+          command: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: Unit tests and collecate coverage
+          command: npm run test-coverage
+      - store_artifacts:
+          path: coverage
+
+  deepcode:
+    parameters:
+      wd:
+        type: string
+        default: ./${CIRCLE_PROJECT_REPONAME}
+      files:
+        type: string
+        default: '.'
+      severity:
+        description: 'Minimum severity level.'
+        type: enum
+        enum: ['info', 'warning', 'critical']
+        default: 'info'
+    executor: python38
+    steps:
+      - checkout
+      - run:
+          name: Install DeepCode CLI
+          command: |
+            cd <<parameters.wd>>
+            python3 -m venv ${HOME}/.venv/
+            . ~/.venv/bin/activate
+            echo "source ${HOME}/.venv/bin/activate" >> $BASH_ENV
+            pip install deepcode
+      - run:
+          name: Run DeepCode CLI
+          command: |
+            cd <<parameters.wd>>
+            deepcode analyze -sev critical -p <<parameters.files>> | tee results.json
+
+  sonarCloud:
+    docker:
+      - image: 'node:latest'
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: npm install
+      - run:
+          name: Create test coverage
+          command: npm run test-coverage
+      - sonarcloud/scan
+
+  deploy:
+    docker:
+      - image: circleci/node:12
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Set AWS credentials
+          command: ./node_modules/.bin/sls config credentials --provider aws --key $AWS_ACCESS_KEY_ID --secret $AWS_SECRET_ACCESS_KEY --overwrite
+      - run:
+          name: Deploy on AWS
+          command: ./deploy.sh "$CIRCLE_BRANCH"
+
+workflows:
+  version: 2
+  dev-build:
+    jobs:
+      - build-and-test:
+          filters:
+            branches:
+              ignore: /(^develop$)|(^master$)/
+      - deepcode:
+          filters:
+            branches:
+              ignore: /(^develop$)|(^master$)/
+          files: '.'
+          wd: '.'
+      - sonarCloud:
+          filters:
+            branches:
+              ignore: /(^develop$)|(^master$)/
+          context: SonarCloud
+  dev-deploy:
+    jobs:
+      - build-and-test:
+          filters:
+            branches:
+              only: /develop/
+      - deepcode:
+          filters:
+            branches:
+              only: /develop/
+          files: '.'
+          wd: '.'
+      - sonarCloud:
+          filters:
+            branches:
+              only: /develop/
+          context: SonarCloud
+      - deploy:
+          requires:
+            - sonarCloud
+            - deepcode
+            - build-and-test
+
+  prod-deploy:
+    jobs:
+      - build-and-test:
+          filters:
+            branches:
+              only: /master/
+      - deepcode:
+          filters:
+            branches:
+              only: /master/
+          files: '.'
+          wd: '.'
+      - sonarCloud:
+          filters:
+            branches:
+              only: /master/
+          context: SonarCloud
+      - deployment-approval:
+          type: approval
+          requires:
+            - sonarCloud
+            - deepcode
+            - build-and-test
+      - deploy:
+          requires:
+            - deployment-approval

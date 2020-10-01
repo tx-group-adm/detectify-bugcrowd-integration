@@ -1,0 +1,56 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: bug-bounty
+
+custom:
+  secrets:
+    DETECTIFY_API_KEY: ${ssm:/aws/reference/secretsmanager/secrets/DETECTIFY_API_KEY~true}
+    DETECTIFY_SECRET_KEY: ${ssm:/aws/reference/secretsmanager/secrets/DETECTIFY_SECRET_KEY~true}
+    BUG_CROWD_TOKEN: ${ssm:/aws/reference/secretsmanager/secrets/BUG_CROWD_TOKEN~true}
+    BOUNTY_UUID: ${ssm:/aws/reference/secretsmanager/secrets/BUG_BOUNTY_UUID~true}
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  endpointType: REGIONAL
+  memorySize: 128
+  timeout: 29
+  versionFunctions: false
+  logRetentionInDays: 14
+  environment:
+    STAGE: ${self:provider.stage}
+    DETECTIFY_API_KEY: ${self:custom.secrets.DETECTIFY_API_KEY}
+    DETECTIFY_SECRET_KEY: ${self:custom.secrets.DETECTIFY_SECRET_KEY}
+    BUG_CROWD_TOKEN: ${self:custom.secrets.BUG_CROWD_TOKEN}
+    BOUNTY_UUID: ${self:custom.secrets.BOUNTY_UUID}
+
+# you can add packaging information here
+package:
+  exclude:
+    - .vscode/**
+    - .circleci/**
+    - test/**
+    - package-lock.json
+    - package.json
+    - README.md
+    - deploy.sh
+    - .**
+
+functions:
+  server:
+    handler: index.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          method: ANY
+          path: "{proxy+}"
