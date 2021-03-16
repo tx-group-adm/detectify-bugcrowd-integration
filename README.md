@@ -131,4 +131,4 @@ Navigate to your scan profile and there within the settings to integrations: Her
 
 <img width="500" alt="Picture 1" src="https://user-images.githubusercontent.com/33635169/93574629-ede87080-f998-11ea-95c2-c0785c81f6a4.png">
 
-Replace the URL with your AWS endpoint. IMPORTANT to set the new findings options to not generate duplicate entries.
+Replace the URL with your AWS endpoint and also add static path **/detectify/receive-webhook**, this is basically express route where we expect events from detectify. IMPORTANT to set the new findings options to not generate duplicate entries.
