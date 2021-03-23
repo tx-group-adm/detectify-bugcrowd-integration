@@ -7,7 +7,7 @@ module.exports.errorHandling = (msg, err, res) => {
       // ignore
     }
   }
-  console.error(msg, err);
+  console.log(msg, err);
   res.status(500).json({
     error: true,
     message: msg instanceof TypeError ? msg.message : msg || error.message || error,
