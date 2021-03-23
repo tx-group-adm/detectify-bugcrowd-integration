@@ -59,8 +59,16 @@ const bountiesMock = {
   },
 };
 
+const errorMock = {
+  code: 4051,
+  message: 'Finding UUID is malformed',
+  parameters: ['e5cf6af0-ceb5-4872-b823-110d5e89af80a'],
+  more_info: 'https://developer.detectify.com/#error-4051',
+};
+
 module.exports = {
   submissionMock,
   findingsMock,
   bountiesMock,
+  errorMock,
 };

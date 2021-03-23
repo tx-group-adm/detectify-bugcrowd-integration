@@ -37,7 +37,9 @@ Object {
 }
 `;
 
-exports[`getTestFindings 1`] = `
+exports[`getBounties error 1`] = `"Something went wrong!!!"`;
+
+exports[`getFindings 1`] = `
 Object {
   "definition": Object {
     "description": "Are you aware of that this file exists? This file may contain sensitive information.",
@@ -58,5 +60,16 @@ Object {
   "title": "JavaScript webpack sourcemap disclosure",
   "url": "https://detectify.com/report/36df7ce57023ca2fa707160test/11ed472293aa5c466adc6afa3b0e7test/e26b149d-a124-44a6-a6c0-testS/",
   "uuid": "e26b149d-a124-44a6-a6c0-test",
+}
+`;
+
+exports[`getFindings with error 1`] = `
+Object {
+  "code": 4051,
+  "message": "Finding UUID is malformed",
+  "more_info": "https://developer.detectify.com/#error-4051",
+  "parameters": Array [
+    "e5cf6af0-ceb5-4872-b823-110d5e89af80a",
+  ],
 }
 `;
