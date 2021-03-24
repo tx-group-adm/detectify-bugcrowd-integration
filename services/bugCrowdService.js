@@ -10,38 +10,44 @@ const headers = {
 module.exports.createSubmission = async (findings) => {
   // bounty_uuid 357a81ca-92b7-4b60-9548-5a64533c5cca
   // to get this uuid you should run first (GET) https://api.bugcrowd.com/bounties route
-  const path = `/bounties/${process.env.BOUNTY_UUID}/submissions`;
-  const url = `${BugCrowdEndpoint}${path}`;
-  const body = {
-    submission: {
-      title: findings.title,
-      bug_url: findings.found_at,
-      description_markdown: findings.definition.description,
-      priority: scoreCalculation(findings.score[0].score),
-      substate: 'unresolved',
-      extra_info_markdown: findings.definition.risk,
-      researcher_email: 'security@tx.group',
-    },
-  };
+  try {
+    const path = `/bounties/${process.env.BOUNTY_UUID}/submissions`;
+    const url = `${BugCrowdEndpoint}${path}`;
+    const body = {
+      submission: {
+        title: findings.title,
+        bug_url: findings.found_at,
+        description_markdown: findings.definition.description,
+        priority: scoreCalculation(findings.score[0].score),
+        substate: 'unresolved',
+        extra_info_markdown: findings.definition.risk,
+        researcher_email: 'security@tx.group',
+      },
+    };
+    const res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body),
-  });
-
-  return res.json();
+    return await res.json();
+  } catch (error) {
+    throw Error(error);
+  }
 };
 
 module.exports.getBounties = async () => {
   const path = '/bounties';
   const url = `${BugCrowdEndpoint}${path}`;
-
-  const res = await fetch(url, {
-    method: 'GET',
-    headers,
-  });
-  return res.json();
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers,
+    });
+    return await res.json();
+  } catch (error) {
+    throw Error(error);
+  }
 };
 
 function scoreCalculation(score) {

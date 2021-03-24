@@ -1,15 +1,22 @@
 const fetch = require('node-fetch');
 
 const { Response } = jest.requireActual('node-fetch');
-const { makeHeaders, signatureHeaders, getTestFindings } = require('../services/detectifyService');
+const { makeHeaders, signatureHeaders, getFindings } = require('../services/detectifyService');
 const { getBounties, createSubmission, scoreCalculation } = require('../services/bugCrowdService');
-const { submissionMock, findingsMock, bountiesMock } = require('./mocks');
+const { errorHandling } = require('../utils/index');
+const { submissionMock, findingsMock, bountiesMock, errorMock } = require('./mocks');
 
 jest.mock('node-fetch');
 
 // testing keys
 const apiKey = '10840b0f938942feafb7186de74b9682';
 const secretKey = '0vyTnawJRFn0Q9tWLTM188Olizc72JczHSXoIlsPQIc=';
+const mockResponse = () => {
+  const res = {};
+  res.status = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  return res;
+};
 
 test('Checking for signature headers', () => {
   const signatureHeadersResult = {
@@ -48,15 +55,34 @@ beforeEach(() => {
   fetch.mockClear();
 });
 
-test('getTestFindings', async () => {
+test('getFindings', async () => {
   fetch.mockReturnValue(Promise.resolve(new Response(JSON.stringify(findingsMock))));
 
   const url = '/v2/findings/report/36df7ce57023ca2ftest/e31bd6160eaf1d212db348cc9test/66bcf6d0-4ca0-42ae-test/';
-  const response = await getTestFindings(url);
+  try {
+    const response = await getFindings(url);
 
-  expect(fetch).toHaveBeenCalledTimes(1);
-  expect(response).toMatchSnapshot();
-  expect(response).toEqual(findingsMock);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(response).toMatchSnapshot();
+    expect(response).toEqual(findingsMock);
+  } catch (error) {
+    errorHandling('error getting findings', 'Something went wrong', mockResponse());
+  }
+});
+
+test('getFindings with error', async () => {
+  fetch.mockReturnValue(Promise.resolve(new Response(JSON.stringify(errorMock))));
+
+  const url = '/v2/findings/report/wrong/url';
+  try {
+    const response = await getFindings(url);
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(response).toMatchSnapshot();
+    expect(response).toEqual(findingsMock);
+  } catch (error) {
+    errorHandling(errorMock.message, errorMock, mockResponse());
+  }
 });
 
 test('getBounties', async () => {
@@ -76,6 +102,19 @@ test('getBounties', async () => {
     },
     method: 'GET',
   });
+});
+
+test('getBounties error', async () => {
+  fetch.mockReturnValue(Promise.resolve(new Response(JSON.stringify('Something went wrong!!!'))));
+  try {
+    const response = await getBounties();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(response).toMatchSnapshot();
+    expect(response).toEqual(bountiesMock);
+    expect(response).toHaveProperty('uuid');
+  } catch (error) {
+    errorHandling('Error getting bounties', "{'error':true, 'message': 'Something went wrong!!!'}", mockResponse());
+  }
 });
 
 test('createSubmission', async () => {

@@ -43,7 +43,7 @@ function signatureHeaders(apiKeyProp, secretKeyProp, method, path, timestamp, bo
 const apiKey = process.env.DETECTIFY_API_KEY;
 const secretKey = process.env.DETECTIFY_SECRET_KEY;
 
-const getTestFindings = async (path) => {
+const getFindings = async (path) => {
   const url = `${DetectifyEndpoint}${path}`;
   const timestamp = Math.floor(new Date() / 1000);
 
@@ -62,11 +62,17 @@ const getTestFindings = async (path) => {
     method: 'GET',
     headers,
   });
-  return res.json();
+
+  const json = await res.json();
+  if (json.error) {
+    throw JSON.stringify(json.error);
+  }
+
+  return json;
 };
 
 module.exports = {
   makeHeaders,
   signatureHeaders,
-  getTestFindings,
+  getFindings,
 };
