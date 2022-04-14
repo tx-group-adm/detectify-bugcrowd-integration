@@ -84,11 +84,11 @@ workflows:
       - build-and-test:
           filters:
             branches:
-              ignore: /(^develop$)|(^master$)/
+              ignore: /(^develop$)|(^main$)/
       - sonarCloud:
           filters:
             branches:
-              ignore: /(^develop$)|(^master$)/
+              ignore: /(^develop$)|(^main$)/
           context: SonarCloud
   dev-deploy:
     jobs:
@@ -111,11 +111,11 @@ workflows:
       - build-and-test:
           filters:
             branches:
-              only: /master/
+              only: /main/
       - sonarCloud:
           filters:
             branches:
-              only: /master/
+              only: /main/
           context: SonarCloud
       - deployment-approval:
           type: approval

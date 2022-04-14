@@ -8,7 +8,7 @@ set -e
 
 if [ "$BRANCH" == "develop" ] ; then
   STAGE='dev'
-elif [ "$BRANCH" == "master" ] ; then
+elif [ "$BRANCH" == "main" ] ; then
   STAGE='prod'
 fi
 
