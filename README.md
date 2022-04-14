@@ -1,4 +1,3 @@
-[![deepcode](https://www.deepcode.ai/api/gh/badge?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwbGF0Zm9ybTEiOiJnaCIsIm93bmVyMSI6InRhbWVkaWEtcG1kIiwicmVwbzEiOiJidWdjcm93ZC1kZXRlY3RpZnktbWFwcGVyIiwiaW5jbHVkZUxpbnQiOmZhbHNlLCJhdXRob3JJZCI6MTMxOTUsImlhdCI6MTYwMTU1OTY3MH0.90xLPKNbrsUcwEo6TcGHQCEv8bfe1LuytaRKQ7lgzp0)](https://www.deepcode.ai/app/gh/tamedia-pmd/bugcrowd-detectify-mapper/_/dashboard?utm_content=gh%2Ftamedia-pmd%2Fbugcrowd-detectify-mapper)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tamedia-pmd_bugcrowd-detectify-mapper&metric=alert_status)](https://sonarcloud.io/dashboard?id=tamedia-pmd_bugcrowd-detectify-mapper)
 
 # Detectify BugCrowd Integration

@@ -14,13 +14,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tamedia-pmd/bug-bounty.git"
+    "url": "git@github.com:tx-group-adm/detectify-bugcrowd-integration.git"
   },
   "author": "Stefan Milic (stefan.milic@tx.group)",
   "bugs": {
-    "url": "https://github.com/tamedia-pmd/bug-bounty/issues"
+    "url": "https://github.com/tx-group-adm/detectify-bugcrowd-integration/issues"
   },
-  "homepage": "https://github.com/tamedia-pmd/bug-bounty#readme",
+  "homepage": "https://github.com/tx-group-adm/detectify-bugcrowd-integration#readme",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
