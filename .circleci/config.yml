@@ -12,7 +12,7 @@ executors:
     environment:
       LANG: C.UTF-8
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
 
 jobs:
   build-and-test:
@@ -47,36 +47,6 @@ jobs:
           command: npm run test-coverage
       - store_artifacts:
           path: coverage
-
-  deepcode:
-    parameters:
-      wd:
-        type: string
-        default: ./${CIRCLE_PROJECT_REPONAME}
-      files:
-        type: string
-        default: '.'
-      severity:
-        description: 'Minimum severity level.'
-        type: enum
-        enum: ['info', 'warning', 'critical']
-        default: 'info'
-    executor: python38
-    steps:
-      - checkout
-      - run:
-          name: Install DeepCode CLI
-          command: |
-            cd <<parameters.wd>>
-            python3 -m venv ${HOME}/.venv/
-            . ~/.venv/bin/activate
-            echo "source ${HOME}/.venv/bin/activate" >> $BASH_ENV
-            pip install deepcode
-      - run:
-          name: Run DeepCode CLI
-          command: |
-            cd <<parameters.wd>>
-            deepcode analyze -sev critical -p <<parameters.files>> | tee results.json
 
   sonarCloud:
     docker:
@@ -114,17 +84,11 @@ workflows:
       - build-and-test:
           filters:
             branches:
-              ignore: /(^develop$)|(^master$)/
-      - deepcode:
-          filters:
-            branches:
-              ignore: /(^develop$)|(^master$)/
-          files: '.'
-          wd: '.'
+              ignore: /(^develop$)|(^main$)/
       - sonarCloud:
           filters:
             branches:
-              ignore: /(^develop$)|(^master$)/
+              ignore: /(^develop$)|(^main$)/
           context: SonarCloud
   dev-deploy:
     jobs:
@@ -132,12 +96,6 @@ workflows:
           filters:
             branches:
               only: /develop/
-      - deepcode:
-          filters:
-            branches:
-              only: /develop/
-          files: '.'
-          wd: '.'
       - sonarCloud:
           filters:
             branches:
@@ -146,7 +104,6 @@ workflows:
       - deploy:
           requires:
             - sonarCloud
-            - deepcode
             - build-and-test
 
   prod-deploy:
@@ -154,23 +111,16 @@ workflows:
       - build-and-test:
           filters:
             branches:
-              only: /master/
-      - deepcode:
-          filters:
-            branches:
-              only: /master/
-          files: '.'
-          wd: '.'
+              only: /main/
       - sonarCloud:
           filters:
             branches:
-              only: /master/
+              only: /main/
           context: SonarCloud
       - deployment-approval:
           type: approval
           requires:
             - sonarCloud
-            - deepcode
             - build-and-test
       - deploy:
           requires:
