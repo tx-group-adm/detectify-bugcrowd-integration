@@ -1,5 +1,5 @@
 {
-  "name": "bug-bounty",
+  "name": "detectify-bugcrowd-integration",
   "version": "1.0.0",
   "description": "Integration with an automated scanner (detectify) and bug bounty program",
   "main": "index.js",
