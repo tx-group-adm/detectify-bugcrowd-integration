@@ -4,7 +4,7 @@
 #
 version: 2.1
 orbs:
-  node: cimg/node@1.1.6
+  node: circleci/node@1.1.6
   sonarcloud: sonarsource/sonarcloud@1.0.0
 
 executors:
