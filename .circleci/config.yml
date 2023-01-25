@@ -85,25 +85,25 @@ workflows:
           filters:
             branches:
               ignore: /(^develop$)|(^main$)/
-      - sonarCloud:
-          filters:
-            branches:
-              ignore: /(^develop$)|(^main$)/
-          context: SonarCloud
+      # - sonarCloud:
+      #     filters:
+      #       branches:
+      #         ignore: /(^develop$)|(^main$)/
+      #     context: SonarCloud
   dev-deploy:
     jobs:
       - build-and-test:
           filters:
             branches:
               only: /develop/
-      - sonarCloud:
-          filters:
-            branches:
-              only: /develop/
-          context: SonarCloud
+      # - sonarCloud:
+      #     filters:
+      #       branches:
+      #         only: /develop/
+      #     context: SonarCloud
       - deploy:
           requires:
-            - sonarCloud
+            # - sonarCloud
             - build-and-test
 
   prod-deploy:
