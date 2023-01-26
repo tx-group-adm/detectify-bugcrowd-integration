@@ -11,10 +11,10 @@ service: bug-bounty
 
 custom:
   secrets:
-    DETECTIFY_API_KEY: ${ssm:/aws/reference/secretsmanager/secrets/DETECTIFY_API_KEY~true}
-    DETECTIFY_SECRET_KEY: ${ssm:/aws/reference/secretsmanager/secrets/DETECTIFY_SECRET_KEY~true}
-    BUG_CROWD_TOKEN: ${ssm:/aws/reference/secretsmanager/secrets/BUG_CROWD_TOKEN~true}
-    BOUNTY_UUID: ${ssm:/aws/reference/secretsmanager/secrets/BUG_BOUNTY_UUID~true}
+    DETECTIFY_API_KEY: ${ssm:/aws/reference/secretsmanager/secrets/DETECTIFY_API_KEY}
+    DETECTIFY_SECRET_KEY: ${ssm:/aws/reference/secretsmanager/secrets/DETECTIFY_SECRET_KEY}
+    BUG_CROWD_TOKEN: ${ssm:/aws/reference/secretsmanager/secrets/BUG_CROWD_TOKEN}
+    BOUNTY_UUID: ${ssm:/aws/reference/secretsmanager/secrets/BUG_BOUNTY_UUID}
 provider:
   name: aws
   runtime: nodejs12.x
