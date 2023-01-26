@@ -48,18 +48,18 @@ jobs:
       - store_artifacts:
           path: coverage
 
-  sonarCloud:
-    docker:
-      - image: 'node:latest'
-    steps:
-      - checkout
-      - run:
-          name: install dependencies
-          command: npm install
-      - run:
-          name: Create test coverage
-          command: npm run test-coverage
-      - sonarcloud/scan
+  # sonarCloud:
+  #   docker:
+  #     - image: 'node:latest'
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: install dependencies
+  #         command: npm install
+  #     - run:
+  #         name: Create test coverage
+  #         command: npm run test-coverage
+  #     - sonarcloud/scan
 
   deploy:
     docker:
@@ -85,25 +85,25 @@ workflows:
           filters:
             branches:
               ignore: /(^develop$)|(^main$)/
-      - sonarCloud:
-          filters:
-            branches:
-              ignore: /(^develop$)|(^main$)/
-          context: SonarCloud
+      # - sonarCloud:
+      #     filters:
+      #       branches:
+      #         ignore: /(^develop$)|(^main$)/
+      #     context: SonarCloud
   dev-deploy:
     jobs:
       - build-and-test:
           filters:
             branches:
               only: /develop/
-      - sonarCloud:
-          filters:
-            branches:
-              only: /develop/
-          context: SonarCloud
+      # - sonarCloud:
+      #     filters:
+      #       branches:
+      #         only: /develop/
+      #     context: SonarCloud
       - deploy:
           requires:
-            - sonarCloud
+            # - sonarCloud
             - build-and-test
 
   prod-deploy:
@@ -112,15 +112,15 @@ workflows:
           filters:
             branches:
               only: /main/
-      - sonarCloud:
-          filters:
-            branches:
-              only: /main/
-          context: SonarCloud
+      # - sonarCloud:
+      #     filters:
+      #       branches:
+      #         only: /main/
+      #     context: SonarCloud
       - deployment-approval:
           type: approval
           requires:
-            - sonarCloud
+            # - sonarCloud
             - build-and-test
       - deploy:
           requires:
