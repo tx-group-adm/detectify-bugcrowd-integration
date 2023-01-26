@@ -37,7 +37,8 @@ package:
   exclude:
     - .vscode/**
     - .circleci/**
-    - test/**
+    - tests/**
+    - coverage/**
     - package-lock.json
     - package.json
     - README.md
